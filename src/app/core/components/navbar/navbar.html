@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-heart-pulse"></i> SaludCitas
+    </a>
+
+    <button class="navbar-toggler" type="button" aria-label="Menú" (click)="menuAbierto = !menuAbierto">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="menuAbierto">
+      @if (sesion$ | async; as sesion) {
+        <ul class="navbar-nav me-auto">
+          @if (sesion.usuario.rol === 'paciente') {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/paciente/inicio" routerLinkActive="active" (click)="menuAbierto = false">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/paciente/agendar" routerLinkActive="active" (click)="menuAbierto = false">Agendar cita</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/paciente/mis-citas" routerLinkActive="active" (click)="menuAbierto = false">Mis citas</a>
+            </li>
+          } @else {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/admin/medicos" routerLinkActive="active" (click)="menuAbierto = false">Médicos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/admin/especialidades" routerLinkActive="active" (click)="menuAbierto = false">Especialidades</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/admin/sedes" routerLinkActive="active" (click)="menuAbierto = false">Sedes</a>
+            </li>
+          }
+        </ul>
+        <div class="d-flex align-items-center gap-3 text-white">
+          <span><i class="bi bi-person-circle"></i> {{ sesion.paciente?.nombres ?? 'Administrador' }}</span>
+          <button class="btn btn-outline-light btn-sm" (click)="salir()">Salir</button>
+        </div>
+      } @else {
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/auth/login" routerLinkActive="active" (click)="menuAbierto = false">Ingresar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/auth/registro" routerLinkActive="active" (click)="menuAbierto = false">Registrarse</a>
+          </li>
+        </ul>
+      }
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,89 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h3 mb-0">Médicos</h2>
+  <a routerLink="/admin/medicos/nuevo" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-circle"></i> Nuevo médico
+  </a>
+</div>
+
+<app-alert tipo="success" [mensaje]="exito()" (cerrar)="exito.set('')"></app-alert>
+<app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+@if (cargando()) {
+  <app-spinner mensaje="Cargando médicos..."></app-spinner>
+} @else {
+  <div class="row g-2 mb-3">
+    <div class="col-12 col-md-5">
+      <input type="search" class="form-control form-control-sm" placeholder="Buscar por nombre"
+             [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+    </div>
+    <div class="col-6 col-md-4">
+      <select class="form-select form-select-sm"
+              (change)="especialidadFiltro.set(+$any($event.target).value)">
+        <option value="0">Todas las especialidades</option>
+        @for (e of especialidades(); track e.especialidadId) {
+          <option [value]="e.especialidadId">{{ e.nombre }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-6 col-md-3">
+      <select class="form-select form-select-sm" (change)="estadoFiltro.set($any($event.target).value)">
+        <option value="todos">Todos</option>
+        <option value="activos">Activos</option>
+        <option value="inactivos">Inactivos</option>
+      </select>
+    </div>
+  </div>
+
+  @if (filtrados().length === 0) {
+    <div class="alert alert-info">No hay médicos que coincidan con la búsqueda o los filtros.</div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Especialidad</th>
+            <th>Sedes</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of filtrados(); track m.medicoId) {
+            <tr>
+              <td>{{ m.nombres }} {{ m.apellidos }}</td>
+              <td>{{ nombreEspecialidad(m.especialidadId) }}</td>
+              <td>{{ nombresSedes(m.sedeIds) }}</td>
+              <td>
+                <span class="badge" [class.text-bg-success]="m.activo" [class.text-bg-secondary]="!m.activo">
+                  {{ m.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="text-end text-nowrap">
+                <a [routerLink]="['/admin/medicos', m.medicoId, 'editar']" class="btn btn-outline-primary btn-sm me-1">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <button class="btn btn-sm"
+                        [class.btn-outline-danger]="m.activo"
+                        [class.btn-outline-success]="!m.activo"
+                        (click)="pedirCambio(m)">
+                  {{ m.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<app-confirm-modal
+  [visible]="medicoACambiar() !== null"
+  [titulo]="tituloCambio()"
+  [mensaje]="mensajeCambio()"
+  [textoConfirmar]="textoConfirmarCambio()"
+  textoCancelar="No, volver"
+  (confirmar)="confirmarCambio()"
+  (cancelar)="cerrarModal()">
+</app-confirm-modal>

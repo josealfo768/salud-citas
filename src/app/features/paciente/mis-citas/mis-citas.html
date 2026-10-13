@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h3 mb-0">Mis citas</h2>
+  <a routerLink="/paciente/agendar" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-circle"></i> Nueva cita
+  </a>
+</div>
+
+<app-alert tipo="success" [mensaje]="exito()" (cerrar)="exito.set('')"></app-alert>
+<app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+@if (cargando()) {
+  <app-spinner mensaje="Cargando tus citas..."></app-spinner>
+} @else {
+  <div class="row g-2 mb-3">
+    <div class="col-12 col-md-7">
+      <div class="btn-group" role="group" aria-label="Filtrar citas">
+        <button class="btn btn-sm" [class.btn-primary]="filtro() === 'proximas'"
+                [class.btn-outline-primary]="filtro() !== 'proximas'" (click)="cambiarFiltro('proximas')">
+          Próximas <span class="badge text-bg-light">{{ totalProximas() }}</span>
+        </button>
+        <button class="btn btn-sm" [class.btn-primary]="filtro() === 'historial'"
+                [class.btn-outline-primary]="filtro() !== 'historial'" (click)="cambiarFiltro('historial')">
+          Historial <span class="badge text-bg-light">{{ totalHistorial() }}</span>
+        </button>
+        <button class="btn btn-sm" [class.btn-primary]="filtro() === 'todas'"
+                [class.btn-outline-primary]="filtro() !== 'todas'" (click)="cambiarFiltro('todas')">
+          Todas
+        </button>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-5">
+      <input type="search" class="form-control form-control-sm"
+             placeholder="Buscar por médico, especialidad o sede"
+             [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+    </div>
+  </div>
+
+  @if (citasFiltradas().length === 0) {
+    <div class="alert alert-info">
+      @if (citas().length === 0) {
+        Aún no tienes citas. <a routerLink="/paciente/agendar">Agenda la primera</a>.
+      } @else {
+        No hay citas que coincidan con el filtro o la búsqueda.
+      }
+    </div>
+  } @else {
+    <div class="row g-3">
+      @for (v of citasFiltradas(); track v.cita.citaId) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-cita-card [vista]="v" (cancelar)="pedirCancelar($event)"></app-cita-card>
+        </div>
+      }
+    </div>
+  }
+}
+
+<app-confirm-modal
+  [visible]="citaACancelar() !== null"
+  titulo="Cancelar cita"
+  [mensaje]="mensajeCancelar()"
+  textoConfirmar="Sí, cancelar"
+  textoCancelar="No, volver"
+  (confirmar)="confirmarCancelar()"
+  (cancelar)="cerrarModal()">
+</app-confirm-modal>

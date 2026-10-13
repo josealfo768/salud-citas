@@ -1,0 +1,73 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">{{ esEdicion() ? 'Editar médico' : 'Nuevo médico' }}</h2>
+
+        <app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+        @if (cargando()) {
+          <app-spinner mensaje="Cargando..."></app-spinner>
+        } @else {
+          <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label for="nombres" class="form-label">Nombres</label>
+                <input id="nombres" class="form-control" formControlName="nombres"
+                       [class.is-invalid]="invalido('nombres')" />
+                <div class="invalid-feedback">{{ mensajeError('nombres') }}</div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="apellidos" class="form-label">Apellidos</label>
+                <input id="apellidos" class="form-control" formControlName="apellidos"
+                       [class.is-invalid]="invalido('apellidos')" />
+                <div class="invalid-feedback">{{ mensajeError('apellidos') }}</div>
+              </div>
+
+              <div class="col-12">
+                <label for="especialidad" class="form-label">Especialidad</label>
+                <select id="especialidad" class="form-select" formControlName="especialidadId"
+                        [class.is-invalid]="invalido('especialidadId')">
+                  <option [ngValue]="0">Selecciona...</option>
+                  @for (e of especialidades(); track e.especialidadId) {
+                    <option [ngValue]="e.especialidadId">{{ e.nombre }}</option>
+                  }
+                </select>
+                <div class="invalid-feedback">Selecciona una especialidad</div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label d-block">Sedes donde atiende</label>
+                @for (s of sedes(); track s.sedeId) {
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [id]="'sede-' + s.sedeId"
+                           [checked]="form.controls.sedeIds.value.includes(s.sedeId)"
+                           (change)="alternarSede(s.sedeId, $any($event.target).checked)" />
+                    <label class="form-check-label" [for]="'sede-' + s.sedeId">
+                      {{ s.nombre }} <small class="text-muted">({{ s.direccion }})</small>
+                    </label>
+                  </div>
+                }
+                @if (invalido('sedeIds')) {
+                  <div class="text-danger small mt-1">Selecciona al menos una sede</div>
+                }
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <a routerLink="/admin/medicos" class="btn btn-outline-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || guardando()">
+                @if (guardando()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span> Guardando...
+                } @else {
+                  Guardar
+                }
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+<h2 class="h3 mb-4">Hola, {{ nombre }} 👋</h2>
+
+<app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+@if (cargando()) {
+  <app-spinner mensaje="Cargando tu información..."></app-spinner>
+} @else {
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h3 class="h5 mb-3"><i class="bi bi-calendar-check text-primary"></i> Tu próxima cita</h3>
+
+          @if (proxima(); as p) {
+            <p class="mb-1"><strong>{{ p.medico }}</strong></p>
+            <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ p.sede }}</p>
+            <p class="mb-3">
+              <i class="bi bi-clock"></i>
+              {{ p.cita.fechaHora | date: 'dd/MM/yyyy, hh:mm a' }}
+            </p>
+            <a routerLink="/paciente/mis-citas" class="btn btn-outline-primary btn-sm">Ver mis citas</a>
+          } @else {
+            <p class="text-muted">No tienes citas próximas.</p>
+            <a routerLink="/paciente/agendar" class="btn btn-primary btn-sm">Agendar una cita</a>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h3 class="h5 mb-3">Accesos rápidos</h3>
+          <div class="d-grid gap-2">
+            <a routerLink="/paciente/agendar" class="btn btn-primary">
+              <i class="bi bi-plus-circle"></i> Agendar nueva cita
+            </a>
+            <a routerLink="/paciente/mis-citas" class="btn btn-outline-secondary">
+              <i class="bi bi-list-ul"></i> Mis citas
+              <span class="badge text-bg-primary ms-1">{{ totalProgramadas() }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

@@ -1,0 +1,78 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3 text-center">Crear cuenta de paciente</h2>
+
+        <app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+        <form [formGroup]="form" (ngSubmit)="registrar()" novalidate>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label for="nombres" class="form-label">Nombres</label>
+              <input id="nombres" class="form-control" formControlName="nombres"
+                     [class.is-invalid]="invalido('nombres')" />
+              <div class="invalid-feedback">{{ mensajeError('nombres') }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="apellidos" class="form-label">Apellidos</label>
+              <input id="apellidos" class="form-control" formControlName="apellidos"
+                     [class.is-invalid]="invalido('apellidos')" />
+              <div class="invalid-feedback">{{ mensajeError('apellidos') }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="documento" class="form-label">Documento</label>
+              <input id="documento" class="form-control" formControlName="documento"
+                     [class.is-invalid]="invalido('documento')" />
+              <div class="invalid-feedback">{{ mensajeError('documento') }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input id="telefono" class="form-control" formControlName="telefono"
+                     [class.is-invalid]="invalido('telefono')" />
+              <div class="invalid-feedback">{{ mensajeError('telefono') }}</div>
+            </div>
+
+            <div class="col-12">
+              <label for="correo" class="form-label">Correo</label>
+              <input id="correo" type="email" class="form-control" formControlName="correo"
+                     [class.is-invalid]="invalido('correo')" />
+              <div class="invalid-feedback">{{ mensajeError('correo') }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="clave" class="form-label">Contraseña</label>
+              <input id="clave" type="password" class="form-control" formControlName="clave"
+                     [class.is-invalid]="invalido('clave')" />
+              <div class="invalid-feedback">{{ mensajeError('clave') }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="confirmarClave" class="form-label">Confirmar contraseña</label>
+              <input id="confirmarClave" type="password" class="form-control" formControlName="confirmarClave"
+                     [class.is-invalid]="invalido('confirmarClave') || clavesNoCoinciden()" />
+              <div class="invalid-feedback">
+                {{ clavesNoCoinciden() ? 'Las contraseñas no coinciden' : mensajeError('confirmarClave') }}
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 mt-4" [disabled]="form.invalid || cargando()">
+            @if (cargando()) {
+              <span class="spinner-border spinner-border-sm me-2"></span> Registrando...
+            } @else {
+              Crear cuenta
+            }
+          </button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">
+          ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

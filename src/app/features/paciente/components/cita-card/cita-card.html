@@ -1,0 +1,22 @@
+<div class="card h-100 shadow-sm">
+  <div class="card-body d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <h3 class="h6 mb-0">{{ vista.medico }}</h3>
+      <span class="badge text-bg-{{ vista.cita.estado | estadoCita: 'color' }}">
+        {{ vista.cita.estado | estadoCita }}
+      </span>
+    </div>
+
+    <p class="text-muted small mb-2">{{ vista.especialidad }}</p>
+    <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ vista.sede }}</p>
+    <p class="mb-3">
+      <i class="bi bi-clock"></i> {{ vista.cita.fechaHora | date: 'dd/MM/yyyy, hh:mm a' }}
+    </p>
+
+    @if (vista.proxima && vista.cita.estado === 'programada') {
+      <button class="btn btn-outline-danger btn-sm mt-auto align-self-start" (click)="cancelar.emit(vista)">
+        <i class="bi bi-x-circle"></i> Cancelar cita
+      </button>
+    }
+  </div>
+</div>

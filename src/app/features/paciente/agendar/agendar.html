@@ -1,0 +1,164 @@
+<h2 class="h3 mb-3">Agendar cita</h2>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  @for (nombre of pasos; track nombre; let i = $index) {
+    <span class="badge rounded-pill"
+          [class.text-bg-primary]="paso() >= i + 1"
+          [class.text-bg-secondary]="paso() < i + 1">
+      {{ i + 1 }}. {{ nombre }}
+    </span>
+  }
+</div>
+
+<app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+@if (cargando()) {
+  <app-spinner mensaje="Cargando información..."></app-spinner>
+} @else {
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+
+      <!-- Paso 1: especialidad y sede -->
+      @if (paso() === 1) {
+        <h3 class="h5 mb-3">¿Qué especialidad necesitas y en qué sede?</h3>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label for="especialidad" class="form-label">Especialidad</label>
+            <select id="especialidad" class="form-select"
+                    (change)="onEspecialidad($any($event.target).value)">
+              <option value="">Selecciona...</option>
+              @for (e of especialidades(); track e.especialidadId) {
+                <option [value]="e.especialidadId" [selected]="e.especialidadId === especialidadId()">
+                  {{ e.nombre }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label for="sede" class="form-label">Sede</label>
+            <select id="sede" class="form-select" (change)="onSede($any($event.target).value)">
+              <option value="">Selecciona...</option>
+              @for (s of sedes(); track s.sedeId) {
+                <option [value]="s.sedeId" [selected]="s.sedeId === sedeId()">
+                  {{ s.nombre }} - {{ s.direccion }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button class="btn btn-primary" [disabled]="!especialidadId() || !sedeId()" (click)="irAMedicos()">
+            Siguiente
+          </button>
+        </div>
+      }
+
+      <!-- Paso 2: médico -->
+      @if (paso() === 2) {
+        <h3 class="h5 mb-3">Elige tu médico</h3>
+
+        @if (cargandoMedicos()) {
+          <app-spinner mensaje="Buscando médicos disponibles..."></app-spinner>
+        } @else if (medicos().length === 0) {
+          <div class="alert alert-info">
+            No hay médicos disponibles para esa especialidad en esa sede. Vuelve atrás y prueba otra combinación.
+          </div>
+        } @else {
+          <div class="row g-3">
+            @for (m of medicos(); track m.medicoId) {
+              <div class="col-12 col-md-6">
+                <div class="card h-100 border">
+                  <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>Dr(a). {{ m.nombres }} {{ m.apellidos }}</strong><br />
+                      <small class="text-muted">{{ especialidadSel()?.nombre }}</small>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm" (click)="elegirMedico(m.medicoId)">
+                      Elegir
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="mt-4">
+          <button class="btn btn-outline-secondary" (click)="atras()">Atrás</button>
+        </div>
+      }
+
+      <!-- Paso 3: fecha y hora -->
+      @if (paso() === 3) {
+        <h3 class="h5 mb-3">
+          Fecha y hora con Dr(a). {{ medicoSel()?.nombres }} {{ medicoSel()?.apellidos }}
+        </h3>
+
+        <div class="mb-3 col-12 col-md-4 px-0">
+          <label for="fecha" class="form-label">Fecha</label>
+          <input id="fecha" type="date" class="form-control" [min]="minFecha"
+                 [value]="fecha()" (change)="onFecha($any($event.target).value)" />
+        </div>
+
+        @if (fecha()) {
+          @if (cargandoHorarios()) {
+            <app-spinner mensaje="Consultando horarios..."></app-spinner>
+          } @else if (horarios().length === 0) {
+            <div class="alert alert-warning">
+              No hay horarios disponibles ese día (no se atiende fines de semana o ya no quedan cupos). Prueba con otra fecha.
+            </div>
+          } @else {
+            <p class="mb-2">Horarios disponibles:</p>
+            <div class="d-flex flex-wrap gap-2">
+              @for (h of horarios(); track h) {
+                <button class="btn btn-sm"
+                        [class.btn-primary]="hora() === h"
+                        [class.btn-outline-primary]="hora() !== h"
+                        (click)="elegirHora(h)">
+                  {{ h }}
+                </button>
+              }
+            </div>
+          }
+        }
+
+        <div class="d-flex justify-content-between mt-4">
+          <button class="btn btn-outline-secondary" (click)="atras()">Atrás</button>
+          <button class="btn btn-primary" [disabled]="!hora()" (click)="irAConfirmar()">Siguiente</button>
+        </div>
+      }
+
+      <!-- Paso 4: confirmar -->
+      @if (paso() === 4) {
+        <h3 class="h5 mb-3">Confirma tu cita</h3>
+
+        <ul class="list-group mb-4">
+          <li class="list-group-item"><strong>Especialidad:</strong> {{ especialidadSel()?.nombre }}</li>
+          <li class="list-group-item">
+            <strong>Médico:</strong> Dr(a). {{ medicoSel()?.nombres }} {{ medicoSel()?.apellidos }}
+          </li>
+          <li class="list-group-item">
+            <strong>Sede:</strong> {{ sedeSel()?.nombre }} ({{ sedeSel()?.direccion }})
+          </li>
+          <li class="list-group-item">
+            <strong>Fecha y hora:</strong> {{ fechaHora() | date: 'dd/MM/yyyy, hh:mm a' }}
+          </li>
+        </ul>
+
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-outline-secondary" [disabled]="guardando()" (click)="atras()">Atrás</button>
+          <button class="btn btn-success" [disabled]="guardando()" (click)="confirmar()">
+            @if (guardando()) {
+              <span class="spinner-border spinner-border-sm me-2"></span> Agendando...
+            } @else {
+              Confirmar cita
+            }
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

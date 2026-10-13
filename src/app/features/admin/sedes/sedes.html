@@ -1,0 +1,91 @@
+<h2 class="h3 mb-3">Sedes</h2>
+
+<app-alert tipo="success" [mensaje]="exito()" (cerrar)="exito.set('')"></app-alert>
+<app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+@if (cargando()) {
+  <app-spinner mensaje="Cargando sedes..."></app-spinner>
+} @else {
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h3 class="h6 mb-3">{{ editandoId() !== null ? 'Editar sede' : 'Nueva sede' }}</h3>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+        <div class="row g-2 align-items-start">
+          <div class="col-12 col-md-4">
+            <input class="form-control" placeholder="Nombre de la sede" formControlName="nombre"
+                   aria-label="Nombre de la sede" [class.is-invalid]="invalido('nombre')" />
+            <div class="invalid-feedback">{{ mensajeError('nombre') }}</div>
+          </div>
+          <div class="col-12 col-md-5">
+            <input class="form-control" placeholder="Dirección" formControlName="direccion"
+                   aria-label="Dirección" [class.is-invalid]="invalido('direccion')" />
+            <div class="invalid-feedback">{{ mensajeError('direccion') }}</div>
+          </div>
+          <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || guardando()">
+              @if (guardando()) {
+                <span class="spinner-border spinner-border-sm me-2"></span> Guardando...
+              } @else {
+                {{ editandoId() !== null ? 'Actualizar' : 'Agregar' }}
+              }
+            </button>
+            @if (editandoId() !== null) {
+              <button type="button" class="btn btn-outline-secondary" [disabled]="guardando()"
+                      (click)="cancelarEdicion()">
+                Cancelar
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mb-3 col-12 col-md-5 px-0">
+    <input type="search" class="form-control form-control-sm" placeholder="Buscar por nombre o dirección"
+           [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+  </div>
+
+  @if (filtrados().length === 0) {
+    <div class="alert alert-info">No hay sedes que coincidan con la búsqueda.</div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filtrados(); track s.sedeId) {
+            <tr>
+              <td>{{ s.nombre }}</td>
+              <td>{{ s.direccion }}</td>
+              <td class="text-end text-nowrap">
+                <button class="btn btn-outline-primary btn-sm me-1" (click)="editar(s)">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-outline-danger btn-sm" (click)="pedirEliminar(s)">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<app-confirm-modal
+  [visible]="aEliminar() !== null"
+  titulo="Eliminar sede"
+  [mensaje]="mensajeEliminar()"
+  textoConfirmar="Sí, eliminar"
+  textoCancelar="No, volver"
+  (confirmar)="confirmarEliminar()"
+  (cancelar)="cerrarModal()">
+</app-confirm-modal>

@@ -1,0 +1,45 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3 text-center">Iniciar sesión</h2>
+
+        <app-alert tipo="danger" [mensaje]="error()" (cerrar)="error.set('')"></app-alert>
+
+        <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo</label>
+            <input id="correo" type="email" class="form-control" formControlName="correo"
+                   [class.is-invalid]="invalido('correo')" />
+            <div class="invalid-feedback">{{ mensajeError('correo') }}</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="clave" class="form-label">Contraseña</label>
+            <input id="clave" type="password" class="form-control" formControlName="clave"
+                   [class.is-invalid]="invalido('clave')" />
+            <div class="invalid-feedback">{{ mensajeError('clave') }}</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid || cargando()">
+            @if (cargando()) {
+              <span class="spinner-border spinner-border-sm me-2"></span> Ingresando...
+            } @else {
+              Ingresar
+            }
+          </button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">
+          ¿No tienes cuenta? <a routerLink="/auth/registro">Regístrate</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="alert alert-light border mt-3 small">
+      <strong>Usuarios de prueba</strong><br />
+      Paciente: paciente&#64;correo.com / Paciente123<br />
+      Admin: admin&#64;saludcitas.com / Admin123
+    </div>
+  </div>
+</div>

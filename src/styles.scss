@@ -1,1 +1,98 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================================
+// Paleta de SaludCitas: cambia solo estas variables para
+// cambiar los colores de toda la aplicación.
+// ============================================================
+:root {
+  --sc-primary: #0d9488;
+  --sc-primary-dark: #0f766e;
+  --sc-primary-rgb: 13, 148, 136;
+  --sc-accent: #6366f1;
+  --sc-bg-start: #e0f2fe;
+  --sc-bg-mid: #ccfbf1;
+  --sc-bg-end: #ede9fe;
+
+  // Bootstrap usa estas variables para bg-primary, text-primary, badges y enlaces
+  --bs-primary: var(--sc-primary);
+  --bs-primary-rgb: var(--sc-primary-rgb);
+  --bs-link-color: var(--sc-primary-dark);
+  --bs-link-color-rgb: 15, 118, 110;
+  --bs-link-hover-color: var(--sc-primary);
+  --bs-link-hover-color-rgb: var(--sc-primary-rgb);
+}
+
+// ---------- Fondo general con degradado ----------
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--sc-bg-start) 0%, var(--sc-bg-mid) 50%, var(--sc-bg-end) 100%);
+  background-attachment: fixed;
+}
+
+// ---------- Barra de navegación ----------
+.navbar.bg-primary {
+  background-image: linear-gradient(90deg, var(--sc-primary-dark), var(--sc-primary) 60%, var(--sc-accent));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+  font-weight: 600;
+}
+
+// ---------- Tarjetas ----------
+.card {
+  border: 0;
+  border-top: 4px solid var(--sc-primary);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.12);
+}
+
+// ---------- Botones principales ----------
+.btn-primary {
+  --bs-btn-bg: var(--sc-primary);
+  --bs-btn-border-color: var(--sc-primary);
+  --bs-btn-hover-bg: var(--sc-primary-dark);
+  --bs-btn-hover-border-color: var(--sc-primary-dark);
+  --bs-btn-active-bg: var(--sc-primary-dark);
+  --bs-btn-active-border-color: var(--sc-primary-dark);
+  --bs-btn-disabled-bg: var(--sc-primary);
+  --bs-btn-disabled-border-color: var(--sc-primary);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--sc-primary-dark);
+  --bs-btn-border-color: var(--sc-primary);
+  --bs-btn-hover-bg: var(--sc-primary);
+  --bs-btn-hover-border-color: var(--sc-primary);
+  --bs-btn-active-bg: var(--sc-primary-dark);
+  --bs-btn-active-border-color: var(--sc-primary-dark);
+  --bs-btn-disabled-color: var(--sc-primary);
+  --bs-btn-disabled-border-color: var(--sc-primary);
+}
+
+// ---------- Tablas ----------
+.table-responsive {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.12);
+}
+
+thead.table-light {
+  --bs-table-bg: #ccfbf1;
+  --bs-table-color: #134e4a;
+}
+
+// ---------- Formularios ----------
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--sc-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--sc-primary-rgb), 0.2);
+}
+
+.form-check-input:checked {
+  background-color: var(--sc-primary);
+  border-color: var(--sc-primary);
+}
+
+// ---------- Pie de página ----------
+footer {
+  color: var(--sc-primary-dark);
+}

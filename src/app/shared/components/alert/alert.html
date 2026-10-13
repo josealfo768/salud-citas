@@ -1,0 +1,9 @@
+
+@if (mensaje) {
+  <div class="alert alert-{{ tipo }} d-flex justify-content-between align-items-center" role="alert">
+    <span>{{ mensaje }}</span>
+    @if (cerrable) {
+      <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrar.emit()"></button>
+    }
+  </div>
+}
